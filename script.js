@@ -1,10 +1,17 @@
 // Week 10 Assignment
-// 
+// Using HTML, Bootstrap, and JavaScript create a single page website that contains the following:
+//      A Bootstrap styled table representing your choice of data.
+//      A Bootstrap styled form that allows a user to add a new row to the table when clicking on submit.
+//
+// For this I enabled someone to add the albums in their music collection by genre (Pop, Rock, Metal, etc.), using the 
+// album artist's name and the album title. 
+
+// There are two classes: Album and Genre.
 
 class Album {
-    constructor(title, performer) {
+    constructor(artist, title) {
+        this.artist = artist;
         this.title = title;
-        this.performer = performer;
     }
 }
 
@@ -42,6 +49,7 @@ function getValue(id) {
     return document.getElementById(id).value;
 }
 
+//The function that redraws the table(s) when a genre or an album is added or deleted.
 function drawDOM() {
     let genreDiv = document.getElementById('genres');
     clearElement(genreDiv);
@@ -58,14 +66,16 @@ function drawDOM() {
     }
 }
 
+//Adds an album in a row to a genre.
 function createAlbumRow(genre, table, album) {
     let row = table.insertRow(2);
-    row.insertCell(0).innerHTML = album.name;
-    row.insertCell(1).innerHTML = genre.position;
+    row.insertCell(0).innerHTML = album.artist;
+    row.insertCell(1).innerHTML = album.title;
     let actions = row.insertCell(2);
     actions.appendChild(createDeleteRowButton(genre, album));
 }
 
+//Remove an album from a genre list.
 function createDeleteRowButton(genre, album) {
     let btn = document.createElement('button');
     btn.className = 'btn btn-primary';
@@ -78,57 +88,64 @@ function createDeleteRowButton(genre, album) {
     return btn;
 }
 
+// The button that deletes a genre category.
 function createDeleteGenreButton(genre) {
     let btn = document.createElement('button');
     btn.className = 'btn btn-primary';
     btn.innerHTML = 'Delete Genre';
     btn.onclick = () => {
-        let index = genre.indexOf(genre);
+        let index = genres.indexOf(genre);
         genres.splice(index, 1);
         drawDOM();
     };
     return btn;
 }
 
+// The button that creates a new album.
 function createNewAlbumButton(genre) {
     let btn = document.createElement('button');
     btn.className = 'btn btn-primary';
-    btn.innterHTML = 'Add';
+    btn.innerHTML = 'Add';
     btn.onclick = () => {
-        genre.albums.push(new Album(getValue(`name-input-${genre.id}`), getValue(`position-input-${genre.id}`)));
-        drawDOM;
+        genre.albums.push(new Album(getValue(`artist-input-${genre.id}`), getValue(`title-input-${genre.id}`)));
+        drawDOM();
     }
     return btn;
 }
 
+
+// When the Add button is clicked with text in the Genre text field, a new table is created to hold the albums in the genre.
 function createGenreTable(genre) {
     let table = document.createElement('table');
     table.setAttribute('class', 'table table-dark table-striped');
     let row = table.insertRow(0);
-    let nameColumn = document.createElement('th');
-    let positionColumn = document.createElement('th');
-    nameColumn.innerHTML = 'Name';
-    positionColumn.innerHTML = 'Position';
-    row.appendChild(nameColumn);
-    row.appendChild(positionColumn);
+    let titleColumn = document.createElement('th');
+    let artistColumn = document.createElement('th');
+    artistColumn.innerHTML = 'Artist';
+    titleColumn.innerHTML = 'Title';
+    row.appendChild(artistColumn);
+    row.appendChild(titleColumn);
     let formRow = table.insertRow(1);
-    let nameTh = document.createElement('th');
-    let positionTh = document.createElement('th');
+    let artistTh = document.createElement('th');
+    let titleTh = document.createElement('th');
     let createTh = document.createElement('th');
-    let nameInput = document.createElement('input');
-    nameInput.setAttribute('id', `name-input-${genre.id}`);
-    nameInput.setAttribute('type', 'text');
-    nameInput.setAttribute('class', 'form-control');
-    let positionInput = document.createElement('input');
-    positionInput.setAttribute('id', `position-input-${genre.id}`);
-    positionInput.setAttribute('type', 'text');
-    positionInput.setAttribute('class', 'form-control');
+
+    let artistInput = document.createElement('input');
+    artistInput.setAttribute('id', `artist-input-${genre.id}`);
+    artistInput.setAttribute('type', 'text');
+    artistInput.setAttribute('class', 'form-control');
+
+    let titleInput = document.createElement('input');
+    titleInput.setAttribute('id', `title-input-${genre.id}`);
+    titleInput.setAttribute('type', 'text');
+    titleInput.setAttribute('class', 'form-control');
+   
     let newAlbumButton = createNewAlbumButton(genre);
-    nameTh.appendChild(nameInput);
-    positionTh.appendChild(positionInput);
+    artistTh.appendChild(artistInput);
+    titleTh.appendChild(titleInput);
     createTh.appendChild(newAlbumButton);
-    formRow.appendChild(nameTh);
-    formRow.appendChild(positionTh);
+    formRow.appendChild(artistTh);
+    formRow.appendChild(titleTh);
     formRow.appendChild(createTh);
     return table;
 
@@ -136,7 +153,7 @@ function createGenreTable(genre) {
 
 function clearElement(element) {
     while(element.firstChild) {
-        element.removeChild(element, firstChild);
+        element.removeChild(element.firstChild);
     }
 }
 
